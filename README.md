@@ -25,7 +25,7 @@ Das ist ein einfaches Ticket-System. Hier kann man Support-Tickets erstellen und
     npm instal
 
 3. **Datenbank erstellen:**
-
+SQL
     CREATE TABLE tickets (
     id SERIAL PRIMARY KEY,
     problem TEXT NOT NULL,
