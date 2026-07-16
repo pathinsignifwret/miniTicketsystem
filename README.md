@@ -1,34 +1,39 @@
-# Mini-Ticket-System
+# Mini-Ticket-System 🎟️
 
-Ein einfaches und effizientes Fullstack-Ticket-System zur Erfassung und Verwaltung von Support-Anfragen. Entwickelt mit Fokus auf eine saubere Architektur und moderne Technologien.
+Das ist ein einfaches Ticket-System. Hier kann man Support-Tickets erstellen und verwalten.
 
-## Features
+## Was kann das System? (Features)
+* **Tickets erstellen:** Schreiben Sie ein Problem und wählen Sie die Priorität (Niedrig, Normal, Hoch).
+* **Status ändern:** Sie können den Status ändern (*Offen*, *In Arbeit*, *Fertig*).
+* **Farben:** Jeder Status hat eine eigene Farbe (Rot, Gelb oder Grün).
+* **Speichern:** Alle Tickets bleiben in der PostgreSQL-Datenbank gespeichert.
 
-* **Ticket-Erstellung:** Schnelle Erfassung von Problemen mit Angabe der Priorität (Niedrig, Normal, Hoch).
-* **Dynamische Statusverwaltung:** Tickets können direkt auf der Oberfläche im Status geändert werden (*Offen* -> *In Arbeit* -> *Fertig*).
-* **Farbcodierung:** Automatische visuelle Kennzeichnung der Status (Rot für Offen, Gelb für In Arbeit, Grün für Erledigt).
-* **Permanente Speicherung:** Alle Daten werden sicher in einer PostgreSQL-Datenbank gespeichert.
-* **Modernes UI:** Sauberes, responsives Design (HTML5 & CSS3).
-
----
-
-## Technologie-Stack
-
-* **Frontend:** HTML5, CSS3, JavaScript (Vanilla JS)
-* **Backend:** Node.js, Express.js
+## Technologien
+* **Frontend:** HTML, CSS, JavaScript
+* **Backend:** Node.js, Express
 * **Datenbank:** PostgreSQL
-* **Versionskontrolle:** Git & GitHub
 
----
+## Wie startet man das Projekt? (Installation)
 
-## Installation & Start
+1. **Repository kopieren:**
+   ```bash
+   git clone [https://github.com/pathinsignifwret/miniTicketsystem.git](https://github.com/pathinsignifwret/miniTicketsystem.git)
+   cd miniTicketsystem
 
-Um dieses Projekt lokal auszuführen, folgen Sie diesen Schritten:
+2. **Bibliotheken installieren:**
+    ```bash
+    npm instal
 
-### 1. Voraussetzungen
-Stellen Sie sicher, dass Sie **Node.js** und **PostgreSQL** auf Ihrem System installiert haben.
+3. **Datenbank erstellen:**
 
-### 2. Repository klonen
-```bash
-git clone [https://github.com/pathinsignifwret/miniTicketsystem.git](https://github.com/pathinsignifwret/miniTicketsystem.git)
-cd miniTicketsystem
+    CREATE TABLE tickets (
+    id SERIAL PRIMARY KEY,
+    problem TEXT NOT NULL,
+    status VARCHAR(50) DEFAULT 'Offen',
+    prioritaet VARCHAR(20) NOT NULL,
+    erstellungsdatum TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+4. **Server starten:**
+    ```bash
+    node server.js
