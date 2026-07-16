@@ -16,24 +16,26 @@ Das ist ein einfaches Ticket-System. Hier kann man Support-Tickets erstellen und
 ## Wie startet man das Projekt? (Installation)
 
 1. **Repository kopieren:**
-   ```bash
+```bash
    git clone [https://github.com/pathinsignifwret/miniTicketsystem.git](https://github.com/pathinsignifwret/miniTicketsystem.git)
    cd miniTicketsystem
-
+```
 2. **Bibliotheken installieren:**
-    ```bash
+```bash
     npm instal
-
+```
 3. **Datenbank erstellen:**
-SQL
-    CREATE TABLE tickets (
+
+```sql
+CREATE TABLE tickets (
     id SERIAL PRIMARY KEY,
     problem TEXT NOT NULL,
     status VARCHAR(50) DEFAULT 'Offen',
     prioritaet VARCHAR(20) NOT NULL,
     erstellungsdatum TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
+);
+```
 4. **Server starten:**
-    ```bash
+```bash
     node server.js
+```
