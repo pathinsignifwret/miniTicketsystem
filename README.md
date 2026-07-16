@@ -1,4 +1,4 @@
-# Mini-Ticket-System 🎟️
+# Mini-Ticket-System
 
 Ein einfaches und effizientes Fullstack-Ticket-System zur Erfassung und Verwaltung von Support-Anfragen. Entwickelt mit Fokus auf eine saubere Architektur und moderne Technologien.
 
