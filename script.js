@@ -96,13 +96,13 @@ async function addTicket() {
         if (response.ok) {
             const savedTicket = await response.json();
             
-            // wenn erste schreibt "Es gibt noch keine Tickets"
+            // "Es gibt noch keine Tickets"
             showEmptyMessage(false);
             
             // ticket rendern on monitor
             renderTicket(savedTicket);
             
-            // clear input fields
+            // clear fields
             ticketInput.value = '';
             priorityInput.value = 'Normal';
         }
@@ -129,7 +129,7 @@ async function updateTicketStatus(id, selectElement) {
             // alter Klassen entfernen
             badge.classList.remove('status-offen', 'status-in-arbeit', 'status-fertig');
             
-            // neu klasse hinzufügen
+            // neu klasse 
             if (newStatus === 'Offen') {
                 badge.classList.add('status-offen');
             } else if (newStatus === 'In Arbeit') {
@@ -168,7 +168,7 @@ async function deleteTicketFromServer(id) {
     }
 }
 
-// show empty message
+// Leer Nachricht
 function showEmptyMessage(show) {
     if (show) {
         ticketList.innerHTML = `<li class="empty-message" id="emptyMessage">Es gibt noch keine Tickets. Alles ist super!</li>`;
