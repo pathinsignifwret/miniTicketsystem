@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:15-alpine
+    container_name: ticket_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 77889900   
+      POSTGRES_DB: ticketsystem
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  
+  web:
+    build: .
+    container_name: ticket_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: 77889900
+      DB_NAME: ticketsystem
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
