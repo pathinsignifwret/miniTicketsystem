@@ -49,7 +49,8 @@ function renderTicket(ticket) {
 
     li.innerHTML = `
         <div class="ticket-info">
-            <strong>${ticket.problem}</strong>
+            <strong class="ticket-problem">${ticket.problem}</strong>
+            <div class="ticket-summary">AI-Zusammenfassung: ${ticket.zusammenfassung || 'Wird analysiert...'}</div>
             <div class="ticket-details">
                 <span class="badge status-badge ${statusClass}">
                     Status: 
@@ -61,6 +62,7 @@ function renderTicket(ticket) {
                 </span>
                 <span class="badge priority">Priorität: ${ticket.prioritaet}</span>
                 <span class="badge date">Datum: ${date}</span>
+                <span class="badge badge-ai-kategorie">KI: ${ticket.kategorie || 'Allgemein'}</span>
             </div>
         </div>
         <button class="delete-btn" onclick="deleteTicketFromServer(${ticket.id})">Löschen</button>

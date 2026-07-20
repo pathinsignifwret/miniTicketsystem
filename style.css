@@ -146,3 +146,23 @@ h1 {
     background-color: #d4edda !important; 
     color: #155724 !important;
 }
+
+/* --- AI --- */
+.ticket-summary {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    margin: 2px 0;
+}
+
+.badge-ai-kategorie {
+    background-color: #e0f2fe !important; 
+    color: #0369a1 !important;           
+    border: 1px solid #bae6fd;
+    font-weight: bold;
+}
+
+.ticket-problem {
+    color: #222;
+    font-size: 16px;
+}
