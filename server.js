@@ -4,12 +4,28 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 
+const { Anthropic } = require('@anthropic-ai/sdk');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const anthropic = new Anthropic({});
+// 1. CORS: Erlaube Anfragen von allen Seiten (z.B. Live Server)
+app.use(cors({
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// postgresql
+// 2. JSON und Statische Dateien senden
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// 3. Anthropic SDK
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY || 'dummy_key',
+});
+
+// 4. Verbindung mit PostgreSQL
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -18,27 +34,26 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
-// DB
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
-        console.error('Fehler bei der Verbindung zur Datenbank:', err.message);
+        console.error('Fehler bei der Verbindung mit der Datenbank:', err.message);
     } else {
-        console.log('Erfolgreich mit PostgreSQL verbunden!');
+        console.log('Verbindung zur Datenbank war erfolgreich!');
     }
 });
 
-app.use(express.json());
-
-app.use(express.static(path.join(__dirname)));
-
-// analyze ticket with Claude API
+// 5. AI Ticket Prüfung mit Claude oder Notfall-Logik
 async function analyzeTicketWithClaude(problemText) {
     try {
+        if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY.includes('dummy')) {
+            throw new Error('Kein API-Schlüssel. Nutze einfache Logik.');
+        }
+
         const prompt = `Du bist ein IT-Support-Assistent. Analysiere folgendes Ticket-Problem: "${problemText}". 
-        Gib als Antwort NUR ein valides JSON-Objekt im folgenden Format zurück (ohne Markdown-Formatierung wie \`\`\`json):
+        Gib als Antwort NUR ein valides JSON-Objekt im folgenden Format zurück (ohne Markdown):
         {
-          "kategorie": "Eine passende IT-Kategorie auf Deutsch, z. B. IT-Sicherheit / Account, Netzwerk / Infrastruktur, Hardware-Support, Finanzen / Buchhaltung, Allgemein",
-          "zusammenfassung": "Eine kurze, prägnante Zusammenfassung des Problems auf Deutsch (maximal 10 Wörter)"
+          "kategorie": "IT-Sicherheit / Account, Netzwerk / Infrastruktur, Hardware-Support, Finanzen / Buchhaltung, oder Allgemein",
+          "zusammenfassung": "Kurze Zusammenfassung des Problems (bis zu 10 Wörter)"
         }`;
 
         const response = await anthropic.messages.create({
@@ -55,23 +70,19 @@ async function analyzeTicketWithClaude(problemText) {
             zusammenfassung: aiResponse.zusammenfassung || problemText
         };
     } catch (err) {
-        console.error('Claude API Fehler, nutze Fallback-Logik:', err.message);
+        console.warn('⚠️ API-Fehler (Einfache Logik wird genutzt):', err.message);
         
-        // mit vokabel jednefall
         const textLower = problemText.toLowerCase();
         let kategorie = 'Allgemein';
-        if (textLower.includes('passwort') || textLower.includes('login') || textLower.includes('anmelden')) {
+        if (textLower.includes('passwort') || textLower.includes('login')) {
             kategorie = 'IT-Sicherheit / Account';
-        } else if (textLower.includes('internet') || textLower.includes('netzwerk') || textLower.includes('wlan')) {
+        } else if (textLower.includes('internet') || textLower.includes('wlan')) {
             kategorie = 'Netzwerk / Infrastruktur';
-        } else if (textLower.includes('drucker') || textLower.includes('hardware') || textLower.includes('pc')) {
+        } else if (textLower.includes('drucker') || textLower.includes('pc')) {
             kategorie = 'Hardware-Support';
-        } else if (textLower.includes('rechnung') || textLower.includes('bezahlen') || textLower.includes('geld')) {
-            kategorie = 'Finanzen / Buchhaltung';
         }
         
-        const zusammenfassung = problemText.length > 40 ? problemText.substring(0, 37) + '...' : problemText;
-        
+        const zusammenfassung = problemText.length > 35 ? problemText.substring(0, 32) + '...' : problemText;
         return { kategorie, zusammenfassung };
     }
 }
@@ -83,7 +94,7 @@ app.get('/api/tickets', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error('Fehler bei GET /api/tickets:', err.message);
-        res.status(500).json({ error: 'Serverfehler' });
+        res.status(500).json({ error: 'Serverfehler. Bitte später versuchen.' });
     }
 });
 
@@ -92,7 +103,7 @@ app.post('/api/tickets', async (req, res) => {
     const { problem, status, prioritaet } = req.body;
 
     if (!problem || !prioritaet) {
-        return res.status(400).json({ error: 'Problem und Priorität sind Pflichtfelder!' });
+        return res.status(400).json({ error: 'Problem und Priorität sind wichtig!' });
     }
 
     try {
@@ -156,7 +167,7 @@ app.put('/api/tickets/:id/status', async (req, res) => {
     }
 });
 
-// server starten
-app.listen(PORT, () => {
-    console.log(`Server läuft auf Port ${PORT}`);
+// 7. Server starten
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server läuft auf http://127.0.0.1:${PORT}`);
 });
